@@ -343,6 +343,11 @@ size_t HashTable<K,V,Prober,Hash,KEqual>::size() const
 template<typename K, typename V, typename Prober, typename Hash, typename KEqual>
 void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
 {
+
+  if(static_cast<double>(size() + 1) / CAPACITIES[mIndex_] >= 0.4){ // check for resizing first
+    resize();
+  }
+
   HASH_INDEX_T loc = probe(p.first); // probe to find a location
 
   if(loc == npos){ // no location available, throw error
