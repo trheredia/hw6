@@ -96,4 +96,31 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 {
 //add your solution here!
 
+  if(r >= board.size() || c >= board[0].size()){ // base case: board size
+    return false;
+  }
+
+  word += board[r][c]; // add letter to word
+
+  if(prefix.find(word) == prefix.end()){ // check if it's a prefix, if not then stop
+    return false;
+  }
+
+  bool valid = false; // track valid dict word
+
+  if(dict.find(word) != dict.end()){ // 
+    valid = true;
+  }
+
+  bool deepSearch = boggleHelper(dict, prefix, board, word, result, r + dr, c + dc, dr, dc); // recurse in direction
+
+  if(!deepSearch && valid){ // if we couldn't find anything longer and the word is valid then insert
+    result.insert(word);
+    return true;
+  }
+
+  return deepSearch || valid;
+
 }
+
+
