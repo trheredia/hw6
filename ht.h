@@ -273,6 +273,7 @@ private:
     HASH_INDEX_T mIndex_;  // index to CAPACITIES
 
     // ADD MORE DATA MEMBERS HERE, AS NECESSARY
+    double resizeAlpha_;
 
 };
 
@@ -298,6 +299,7 @@ HashTable<K,V,Prober,Hash,KEqual>::HashTable(
     // Initialize any other data members as necessary
     totalProbes_ = 0;
     mIndex_ = 0;
+    resizeAlpha_ = resizeAlpha;
     table_.resize(CAPACITIES[mIndex_], nullptr);
 }
 
@@ -344,7 +346,7 @@ template<typename K, typename V, typename Prober, typename Hash, typename KEqual
 void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
 {
 
-  if(static_cast<double>(size() + 1) / CAPACITIES[mIndex_] >= 0.4){ // check for resizing first
+  if(static_cast<double>(size() + 1) / CAPACITIES[mIndex_] >= resizeAlpha_){ // check for resizing first
     resize();
   }
 
@@ -460,7 +462,7 @@ void HashTable<K,V,Prober,Hash,KEqual>::resize()
   table_.clear(); // clear out the current table
   table_.resize(CAPACITIES[mIndex_], nullptr); // resize the current table 
   for(HASH_INDEX_T i = 0 ; i < temporary.size(); i++){ // loop through the old table to rehash
-    if(temporary[i]->deleted == false && temporary[i] != nullptr){ // check if there is any value in the bucket
+    if(temporary[i] != nullptr && temporary[i]->deleted == false){ // check if there is any value in the bucket
       insert(temporary[i]->item); // call the insert function for this item
     }
     if(temporary[i] != nullptr){ // delete items as we go to clear the old table
